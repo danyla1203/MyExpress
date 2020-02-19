@@ -1,0 +1,13 @@
+{
+    "author": "danyla1203",
+    "dependencies": {
+        "express": "4.17.1",
+        "redis": "3.0.2"
+    },
+    "devDependencies": {
+        "nodemon": "2.0.2"
+    },
+    "scripts": {
+        "serve": "nodemon index.js"
+    }
+}
