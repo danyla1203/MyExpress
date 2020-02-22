@@ -2,36 +2,76 @@ const http = require("http");
 
 let createApp = function () {
     const app = http.createServer();
-
     app.routers = [];
 
     app.get = (url, callback) => {
         app.routers.push({
             url: url,
-            callback: callback
+            callback: callback,
+            type: "router"
         });
     }
 
     app.use = (url, callback) => {
         app.routers.push({
             url: url,
-            callback: callback
+            callback: callback,
+            type: "middleware"
         });
     }
 
     app.serve = () => {
+       
         app.on("request", (req, res) => {
+            let lable;
+            console.time(lable);
+
             let callStack = [];
+            console.log(app.routers);
 
             for (let i = 0; i < app.routers.length; i++) {
-                if (req.url == app.routers[i].url) {
-                    callStack.push(app.routers[i]);
+                //split path from url, and router path
+                let splitedRouterPath = app.routers[i].url.split("/");
+                let splitedPath = req.url.split("/");
+
+                console.log(splitedPath, splitedRouterPath);
+                
+                if (app.routers[i].type == "router") {
+                    let isPath = true;
+
+                    for (let j = 1; j < splitedPath.length; j++) {
+                        if (splitedPath[j] == splitedRouterPath[j]) {
+                            continue;
+                        } else if ( splitedRouterPath[j][0] == ":" ) {
+                            //add variable to app object
+                            let variableName = splitedRouterPath[j].slice(1);
+                            let obj = {};
+                            obj[variableName] = splitedPath[j];
+                            if (app.params) {
+                                app.params = [...app.params, obj];
+                            } else {
+                                app.params = [obj];
+                            }
+                            
+                        } else {
+                            isPath = false;
+                            break;
+                        }
+                    }
+                    if (isPath) {
+                        callStack.push(app.routers[i]);
+                    }
+                } else if (app.routers[i].type == "middleware") {
+                    
                 }
             }
 
+            console.log(callStack, "-- callStack");
+            console.timeEnd(lable);
             for (let i = 0; i < callStack.length; i++) {
                 callStack[i].callback(req, res);
             }
+        
         });
     }
     return app;

@@ -1,7 +1,7 @@
 const createApp = require("./express").createApp;
 const app = createApp();
 
-app.use("/", (req, res, next) => {
+/* app.use("/", (req, res, next) => {
     console.log("Middle");
 });
 
@@ -10,11 +10,20 @@ app.get("/", (req, res) => {
     res.end(""); 
 });
 
-app.get("/post", (req, res) => {
+
+app.use("/post/hello", (req, res) => { console.log("Test") });
+
+app.use("/post", (req, res) => {
+    console.log("Foo!");
+}); */
+
+app.get("/post/:text", (req, res) => {
     console.log("Deb"); 
-    res.end("") 
+    console.log(app.params);
+    res.end("1");
 });
+
 
 app.serve();
 
-app.listen(3001);
+app.listen(3000);
