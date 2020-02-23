@@ -16,6 +16,14 @@ app.use("/post/hello", (req, res) => { console.log("Test") });
 app.use("/post", (req, res) => {
     console.log("Foo!");
 }); */
+app.use("/test", (req, res) => {
+    console.log("test middle!");
+})
+app.get("/test/:str", (req, res) => {
+    console.log(app.params, "HERE");
+    res.end("Test" + app.params.str);
+})
+
 
 app.get("/post/:text", (req, res) => {
     console.log("Deb"); 

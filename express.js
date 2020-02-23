@@ -42,7 +42,7 @@ let createApp = function () {
                     for (let j = 1; j < splitedPath.length; j++) {
                         if (splitedPath[j] == splitedRouterPath[j]) {
                             continue;
-                        } else if ( splitedRouterPath[j][0] == ":" ) {
+                        } else if ( splitedRouterPath[j][0] == ":") {
                             //add variable to app object
                             let variableName = splitedRouterPath[j].slice(1);
                             let obj = {};
@@ -62,7 +62,21 @@ let createApp = function () {
                         callStack.push(app.routers[i]);
                     }
                 } else if (app.routers[i].type == "middleware") {
-                    
+
+                    let isPath = true;
+                    for (let j = 1; j < splitedRouterPath.length; j++) {
+                        if (splitedRouterPath[j] == splitedPath[j]) {
+                            continue;
+                        }
+                        else {
+                            isPath = false;
+                            break;
+                        }
+                    }
+                    if (isPath) {
+                        callStack.push(app.routers[i]);
+                    }
+
                 }
             }
 
