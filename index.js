@@ -20,17 +20,23 @@ app.use("/test", (req, res) => {
     console.log("test middle!");
 })
 app.get("/test/:str", (req, res) => {
-    console.log(app.params, "HERE");
+    console.log(req.params, "HERE");
     res.end("Test" + app.params.str);
 })
 
+app.use("/post", (req, res) => {
+    console.log("some action");
+});
 
-app.get("/post/:text", (req, res) => {
+app.get("/post/:text/:name", (req, res) => {
     console.log("Deb"); 
-    console.log(app.params);
+    console.log(req.params);
     res.end("1");
 });
 
+app.use("/post", (req, res) => {
+    console.log("after");
+})
 
 app.serve();
 

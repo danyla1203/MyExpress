@@ -27,14 +27,13 @@ let createApp = function () {
             console.time(lable);
 
             let callStack = [];
-            console.log(app.routers);
 
             for (let i = 0; i < app.routers.length; i++) {
                 //split path from url, and router path
                 let splitedRouterPath = app.routers[i].url.split("/");
                 let splitedPath = req.url.split("/");
 
-                console.log(splitedPath, splitedRouterPath);
+                //console.log(splitedPath, splitedRouterPath);
                 
                 if (app.routers[i].type == "router") {
                     let isPath = true;
@@ -43,14 +42,16 @@ let createApp = function () {
                         if (splitedPath[j] == splitedRouterPath[j]) {
                             continue;
                         } else if ( splitedRouterPath[j][0] == ":") {
-                            //add variable to app object
+                            //add variable to request object
                             let variableName = splitedRouterPath[j].slice(1);
-                            let obj = {};
-                            obj[variableName] = splitedPath[j];
-                            if (app.params) {
-                                app.params = [...app.params, obj];
+
+                            if (req.params) {
+                                let obj = {};
+                                obj[variableName] = splitedPath[j];
+                                req.params = Object.assign({}, req.params, obj);
                             } else {
-                                app.params = [obj];
+                                req.params = {};
+                                req.params[variableName] = splitedPath[j];
                             }
                             
                         } else {
@@ -80,7 +81,7 @@ let createApp = function () {
                 }
             }
 
-            console.log(callStack, "-- callStack");
+            //console.log(callStack, "-- callStack");
             console.timeEnd(lable);
             for (let i = 0; i < callStack.length; i++) {
                 callStack[i].callback(req, res);
