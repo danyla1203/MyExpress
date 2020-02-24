@@ -16,6 +16,14 @@ app.use("/post/hello", (req, res) => { console.log("Test") });
 app.use("/post", (req, res) => {
     console.log("Foo!");
 }); */
+
+app.use("/", (req, res) => {
+    console.log("Hi!");
+})
+app.get("/", (req, res) => {
+    res.end("Hello!");
+})
+
 app.use("/test", (req, res) => {
     console.log("test middle!");
 })
