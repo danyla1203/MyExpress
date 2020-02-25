@@ -1,4 +1,5 @@
 const createApp = require("./express").createApp;
+const fs = require("fs");
 const app = createApp();
 
 /* app.use("/", (req, res, next) => {
@@ -17,12 +18,16 @@ app.use("/post", (req, res) => {
     console.log("Foo!");
 }); */
 
-app.use("/", (req, res) => {
-    console.log("Hi!");
-})
+app.use("/", app.static);
+
+app.get("/favicon.ico", (req, res) => { res.end("") });
+
 app.get("/", (req, res) => {
-    res.end("Hello!");
-})
+    fs.readFile("index.html", "utf8", (err, result) => {
+        if (err) throw err;
+        res.end(result);
+    })
+});
 
 app.use("/test", (req, res) => {
     console.log("test middle!");
@@ -41,10 +46,6 @@ app.get("/post/:text/:name", (req, res) => {
     console.log(req.params);
     res.end("1");
 });
-
-app.use("/post", (req, res) => {
-    console.log("after");
-})
 
 app.serve();
 

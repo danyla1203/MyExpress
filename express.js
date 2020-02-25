@@ -1,4 +1,5 @@
 const http = require("http");
+const fs = require("fs");
 
 let createApp = function () {
     const app = http.createServer();
@@ -9,6 +10,13 @@ let createApp = function () {
             url: url,
             callback: callback,
             type: "router"
+        });
+    }
+
+    app.static = (req, res) => {
+        fs.readFile(`.${req.url}`, "utf8", (err, result) => {
+            if (err) return;
+            res.end(result);
         });
     }
 
@@ -30,8 +38,10 @@ let createApp = function () {
 
             for (let i = 0; i < app.routers.length; i++) {
                 //split path from url, and router path
+
                 let splitedRouterPath = app.routers[i].url.split("/");
                 let splitedPath = req.url.split("/");
+                console.log(splitedRouterPath, splitedPath);
                 
                 if (app.routers[i].type == "router") {
                     let isPath = true;
@@ -67,8 +77,14 @@ let createApp = function () {
                     }
 
                 } else if (app.routers[i].type == "middleware") {
-                    
+                    //if middleware path == "/"
+                    if (app.routers[i].url == "/") {
+                        callStack.push(app.routers[i]);
+                        continue;
+                    }
+
                     let isPath = true;
+                    
                     for (let j = 1; j < splitedRouterPath.length; j++) {
                         if (splitedRouterPath[j] == splitedPath[j]) {
                             continue;
@@ -84,6 +100,7 @@ let createApp = function () {
 
                 }
             }
+            console.log(callStack);
             console.timeEnd(lable);
             for (let i = 0; i < callStack.length; i++) {
                 callStack[i].callback(req, res);
